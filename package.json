@@ -1,6 +1,6 @@
 {
   "name": "slack-tracker",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "A simple Slack logger that sends logs to a Slack channel via a webhook URL",
   "main": "dist/index.js",
   "browser": "dist/browser.js",

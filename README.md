@@ -29,6 +29,28 @@ yarn add slack-tracker
 pnpm add slack-tracker
 ```
 
+## Demo
+
+Live demo:
+
+```txt
+https://stackblitz.com/edit/stackblitz-starters-5gwmyjxy?file=index.js
+```
+
+#### Download code from stackblitz
+```bash
+cd demo
+npm start
+```
+
+Open:
+
+```txt
+http://localhost:3030
+```
+
+
+
 ## Configuration
 
 Call `slackLogConfig()` once when your app starts, such as in onload, oninit, bootloader, module loader, app constructor, or server startup code.
@@ -73,7 +95,11 @@ slackLogConfig({
 await slack.log("Server started", { port: 3000 }, LogLevel.SUCCESS);
 await slack.log("User created", { id: 101, email: "user@example.com" });
 await slack.log("Validation warning", { field: "email" }, LogLevel.WARN);
-await slack.log("Unhandled error", { message: "Something failed" }, LogLevel.ERROR);
+await slack.log(
+  "Unhandled error",
+  { message: "Something failed" },
+  LogLevel.ERROR,
+);
 ```
 
 ```ts
@@ -84,7 +110,11 @@ slackLogConfig({
   enable: true,
 });
 
-await slack.log("Payment received", { amount: 49, currency: "USD" }, LogLevel.INFO);
+await slack.log(
+  "Payment received",
+  { amount: 49, currency: "USD" },
+  LogLevel.INFO,
+);
 ```
 
 ## Log Levels
@@ -277,68 +307,3 @@ slackLogConfig({
 ```
 
 Call this before `slack.log`, `slack.logBlockMessage`, `slack.raw`, or `handleSlackLogsRequest`.
-
-## Exports
-
-```ts
-import {
-  DEFAULT_PROXY_URL,
-  LogColor,
-  LogLevel,
-  handleSlackLogsRequest,
-  slack,
-  slackLogConfig,
-} from "slack-tracker";
-```
-
-## Published Package Contents
-
-The package is built before publish and exposes only generated runtime files from `dist`.
-
-Published files:
-
-```txt
-dist/index.js
-dist/browser.js
-dist/index.d.ts
-dist/assets/*
-package.json
-README.md
-```
-
-Source and release scripts are not included in the npm package.
-
-## Release Workflow
-
-Before publish:
-
-```bash
-npm run build
-```
-
-During publish:
-
-```bash
-npm publish
-```
-
-`prepublishOnly` creates a fresh `dist` folder. `postpublish` commits the current code and creates a release tag using the package version.
-
-## Demo
-
-```bash
-cd demo
-npm start
-```
-
-Open:
-
-```txt
-http://localhost:3030
-```
-
-Live demo:
-
-```txt
-https://stackblitz.com/edit/stackblitz-starters-httppkmt?file=public%2Fapp.js
-```
