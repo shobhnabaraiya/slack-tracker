@@ -1,5 +1,8 @@
 node_modules/
-
+*.tgz
+.codex
 dist/
-
-package-lock.json
+.env
+demo/.env
+!.env.example
+!demo/.env.example

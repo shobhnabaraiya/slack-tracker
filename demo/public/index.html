@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>slack-tracker Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">slack-tracker demo</p>
+        <h1>Send every format from one place.</h1>
+        <p class="copy">
+          Test server logs, block messages, raw payloads, and the internal proxy route.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Webhook URL</h2>
+        </div>
+
+        <div class="config-row">
+          <input
+            id="webhookUrl"
+            class="input"
+            type="text"
+            placeholder="Paste webhook URL here. Leave blank to use demo/.env"
+          />
+          <button class="button button-save" id="saveWebhook">Save</button>
+          <button class="button button-ghost" id="clearWebhook">Clear</button>
+        </div>
+
+        <p class="panel-copy">
+          This override is used for both server demo requests and client proxy requests.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Server-side examples</h2>
+          <button class="button button-ghost" data-demo="all">Send All</button>
+        </div>
+
+        <div class="grid">
+          <button class="button" data-demo="log-default">Default Log</button>
+          <button class="button button-success" data-demo="log-success">Success Log</button>
+          <button class="button button-warn" data-demo="log-warn">Warn Log</button>
+          <button class="button button-danger" data-demo="log-error">Error Log</button>
+          <button class="button button-info" data-demo="block-info">Block Message</button>
+          <button class="button button-raw" data-demo="raw-button">Raw Button Message</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Client proxy example</h2>
+          <button class="button button-proxy" id="proxyButton">Send Client Raw</button>
+        </div>
+
+        <p class="panel-copy">
+          This sends a raw payload to <code>/api/slack-tracker</code>, matching the package proxy flow.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Status</h2>
+        </div>
+        <pre id="status">Ready.</pre>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

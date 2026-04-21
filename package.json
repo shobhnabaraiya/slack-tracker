@@ -1,13 +1,23 @@
 {
   "name": "slack-tracker",
-  "version": "2.0.1",
+  "version": "4.0.2",
   "description": "A simple Slack logger that sends logs to a Slack channel via a webhook URL",
   "main": "dist/index.js",
+  "browser": "dist/browser.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "node scripts/build-dist.js",
+    "prepublishOnly": "npm run build",
+    "postpublish": "node scripts/release-git.js"
   },
-  "keywords": [
+  "files": [
+    "dist"
+  ],
+ "keywords": [
+    "slack-log",
+    "log-data",
+    "slack-notify",
+    "notify-me",
     "slack",
     "slack-tracker",
     "logger",
@@ -15,13 +25,11 @@
     "shobhna baraiya"
   ],
   "author": "Shobhna Baraiya",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
-  "devDependencies": {
-    "@types/node": "^22.7.4",
-    "typescript": "^5.6.2"
+  "dependencies": {
+    "axios": "^1.6.7"
   }
 }
