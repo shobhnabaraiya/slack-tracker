@@ -43,47 +43,33 @@ const LEVEL_META = {
   },
 };
 
-const WEBHOOK_ENV_NAMES = [
-  "SLACK_WEBHOOK_URL",
-  "NEXT_PUBLIC_SLACK_WEBHOOK_URL",
-  "PUBLIC_SLACK_SLACK_WEBHOOK_URL",
-];
-
 const MISSING_WEBHOOK_MESSAGE =
-  "🚨 Slack webhook URL is missing. Set one of these env vars: NEXT_PUBLIC_SLACK_WEBHOOK_URL or PUBLIC_SLACK_SLACK_WEBHOOK_URL or SLACK_WEBHOOK_URL. 🚨";
+  "🚨 Slack webhook URL is missing. Call slackLogConfig({ webhookUrl }) once before using slack logs. 🚨";
+const MISSING_CONFIG_MESSAGE =
+  "🚨 Slack logs are not configured. Call slackLogConfig({ webhookUrl, enable, proxy_url }) once before using slack logs. 🚨";
+
+let slackConfig = null;
 
 function isBrowserEnvironment() {
   return typeof window !== "undefined";
 }
 
-function getEnvValue(name) {
-  if (typeof process === "undefined" || !process.env) {
-    return undefined;
-  }
+function slackLogConfig(config = {}) {
+  slackConfig = {
+    webhookUrl: config.webhookUrl || config.weebhookUrl,
+    enable: config.enable !== false,
+    proxy_url: config.proxy_url,
+  };
 
-  return process.env[name];
+  return slackConfig;
 }
 
 function getProxyUrl() {
-  return (
-    globalThis.SLACK_LOGS_PROXY_URL ||
-    getEnvValue("NEXT_PUBLIC_SLACK_LOGS_PROXY_URL") ||
-    getEnvValue("PUBLIC_SLACK_LOGS_PROXY_URL") ||
-    getEnvValue("SLACK_LOGS_PROXY_URL") ||
-    DEFAULT_PROXY_URL
-  );
+  return slackConfig?.proxy_url || DEFAULT_PROXY_URL;
 }
 
 function getWebhookUrl() {
-  for (const name of WEBHOOK_ENV_NAMES) {
-    const value = getEnvValue(name);
-
-    if (value) {
-      return value;
-    }
-  }
-
-  return undefined;
+  return slackConfig?.webhookUrl;
 }
 
 function isValidSlackWebhookUrl() {
@@ -92,7 +78,16 @@ function isValidSlackWebhookUrl() {
 }
 
 function isSlackLogsEnabled() {
-  return (getEnvValue("ENABLE_SLACK_LOGS") ?? "true").toString() !== "false";
+  return slackConfig?.enable !== false;
+}
+
+function hasSlackConfig() {
+  if (slackConfig) {
+    return true;
+  }
+
+  console.error(MISSING_CONFIG_MESSAGE);
+  return false;
 }
 
 function normalizeLogLevel(errorType) {
@@ -251,6 +246,10 @@ function buildBlockPayload(label, objectData, errorType = LogLevel.DEFAULT) {
 }
 
 async function sendSlackMessage(payload) {
+  if (!hasSlackConfig()) {
+    return false;
+  }
+
   if (!isSlackLogsEnabled()) {
     return false;
   }
@@ -272,6 +271,10 @@ async function sendSlackMessage(payload) {
 }
 
 async function sendProxyRequest(body) {
+  if (!hasSlackConfig()) {
+    return null;
+  }
+
   const fetchImpl = globalThis.fetch;
 
   if (typeof fetchImpl !== "function") {
@@ -311,6 +314,21 @@ async function handleSlackLogsRequest(body) {
         success: false,
         status: 400,
         message: "Invalid log type.",
+      };
+    }
+
+    if (!hasSlackConfig()) {
+      return {
+        success: false,
+        status: 500,
+        message: MISSING_CONFIG_MESSAGE,
+      };
+    }
+
+    if (!isSlackLogsEnabled()) {
+      return {
+        success: true,
+        status: 200,
       };
     }
 
@@ -369,6 +387,14 @@ const slack = {
       });
     }
 
+    if (!hasSlackConfig()) {
+      return null;
+    }
+
+    if (!isSlackLogsEnabled()) {
+      return false;
+    }
+
     if (!isValidSlackWebhookUrl()) {
       console.error(MISSING_WEBHOOK_MESSAGE);
       return null;
@@ -387,6 +413,14 @@ const slack = {
       });
     }
 
+    if (!hasSlackConfig()) {
+      return null;
+    }
+
+    if (!isSlackLogsEnabled()) {
+      return false;
+    }
+
     if (!isValidSlackWebhookUrl()) {
       console.error(MISSING_WEBHOOK_MESSAGE);
       return null;
@@ -403,6 +437,14 @@ const slack = {
       });
     }
 
+    if (!hasSlackConfig()) {
+      return null;
+    }
+
+    if (!isSlackLogsEnabled()) {
+      return false;
+    }
+
     if (!isValidSlackWebhookUrl()) {
       console.error(MISSING_WEBHOOK_MESSAGE);
       return null;
@@ -417,5 +459,6 @@ module.exports = {
   LogLevel,
   LogColor,
   handleSlackLogsRequest,
+  slackLogConfig,
   slack,
 };

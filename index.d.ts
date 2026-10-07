@@ -44,7 +44,15 @@ export interface SlackLogsProxyResponse {
   message?: string;
 }
 
+export interface SlackLogConfig {
+  webhookUrl?: string;
+  weebhookUrl?: string;
+  enable?: boolean;
+  proxy_url?: string;
+}
+
 export declare const DEFAULT_PROXY_URL = "/api/slack-tracker";
+export declare function slackLogConfig(config: SlackLogConfig): SlackLogConfig;
 export declare function handleSlackLogsRequest(
   body: SlackLogsProxyRequest,
 ): Promise<SlackLogsProxyResponse>;

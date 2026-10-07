@@ -1,4 +1,8 @@
 node_modules/
 *.tgz
 .codex
-demo/
+dist/
+.env
+demo/.env
+!.env.example
+!demo/.env.example

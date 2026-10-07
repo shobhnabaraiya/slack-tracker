@@ -3,13 +3,20 @@
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
-const { slack, LogLevel, handleSlackLogsRequest } = require("slack-tracker");
+const {
+  slack,
+  LogLevel,
+  handleSlackLogsRequest,
+  slackLogConfig,
+} = require("slack-tracker");
 
 const PORT = Number(process.env.PORT || 3030);
 const PUBLIC_DIR = path.join(__dirname, "public");
 const demoConfig = {
   webhookUrl: normalizeWebhookUrl(process.env.SLACK_WEBHOOK_URL),
 };
+
+configureSlackLogs(demoConfig.webhookUrl);
 
 const STATIC_FILES = {
   "/": {
@@ -91,26 +98,15 @@ function normalizeWebhookUrl(webhookUrl) {
   return value || undefined;
 }
 
-async function withWebhookUrlOverride(webhookUrl, action) {
-  const previousWebhookUrl = process.env.SLACK_WEBHOOK_URL;
-  const nextWebhookUrl =
-    normalizeWebhookUrl(webhookUrl) || demoConfig.webhookUrl;
+function getActiveWebhookUrl(webhookUrl) {
+  return normalizeWebhookUrl(webhookUrl) || demoConfig.webhookUrl;
+}
 
-  if (nextWebhookUrl) {
-    process.env.SLACK_WEBHOOK_URL = nextWebhookUrl;
-  }
-
-  try {
-    return await action();
-  } finally {
-    if (nextWebhookUrl) {
-      if (previousWebhookUrl) {
-        process.env.SLACK_WEBHOOK_URL = previousWebhookUrl;
-      } else {
-        delete process.env.SLACK_WEBHOOK_URL;
-      }
-    }
-  }
+function configureSlackLogs(webhookUrl) {
+  slackLogConfig({
+    webhookUrl,
+    enable: true,
+  });
 }
 
 async function sendLogDefault() {
@@ -305,15 +301,16 @@ async function runServerDemo(kind) {
 async function handleDemoRequest(req, res) {
   try {
     const body = await readBody(req);
-    const message = await withWebhookUrlOverride(body.webhookUrl, () =>
-      runServerDemo(body.kind),
-    );
+    const webhookUrl = getActiveWebhookUrl(body.webhookUrl);
+
+    configureSlackLogs(webhookUrl);
+
+    const message = await runServerDemo(body.kind);
 
     sendJson(res, 200, {
       success: true,
       message,
-      webhookUrl:
-        normalizeWebhookUrl(body.webhookUrl) || demoConfig.webhookUrl || null,
+      webhookUrl: webhookUrl || null,
     });
   } catch (error) {
     sendJson(res, error.statusCode || 500, {
@@ -326,15 +323,16 @@ async function handleDemoRequest(req, res) {
 async function handleProxyRequest(req, res) {
   try {
     const body = await readBody(req);
-    const result = await withWebhookUrlOverride(body.webhookUrl, () =>
-      handleSlackLogsRequest(body),
-    );
+    const webhookUrl = getActiveWebhookUrl(body.webhookUrl);
+
+    configureSlackLogs(webhookUrl);
+
+    const result = await handleSlackLogsRequest(body);
 
     sendJson(res, result.status, {
       success: result.success,
       message: result.message || "Proxy request processed.",
-      webhookUrl:
-        normalizeWebhookUrl(body.webhookUrl) || demoConfig.webhookUrl || null,
+      webhookUrl: webhookUrl || null,
     });
   } catch (error) {
     sendJson(res, 400, {
@@ -356,6 +354,7 @@ async function handleConfigPost(req, res) {
     const body = await readBody(req);
 
     demoConfig.webhookUrl = normalizeWebhookUrl(body.webhookUrl);
+    configureSlackLogs(demoConfig.webhookUrl);
 
     sendJson(res, 200, {
       success: true,

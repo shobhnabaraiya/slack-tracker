@@ -18,25 +18,43 @@ const LogColor = {
   ERROR: "#FF0000",
 };
 
-function getEnvValue(name) {
-  if (typeof process === "undefined" || !process.env) {
-    return undefined;
-  }
+const MISSING_CONFIG_MESSAGE =
+  "🚨 Slack logs are not configured. Call slackLogConfig({ webhookUrl, enable, proxy_url }) once before using slack logs. 🚨";
 
-  return process.env[name];
+let slackConfig = null;
+
+function slackLogConfig(config = {}) {
+  slackConfig = {
+    webhookUrl: config.webhookUrl || config.weebhookUrl,
+    enable: config.enable !== false,
+    proxy_url: config.proxy_url,
+  };
+
+  return slackConfig;
 }
 
 function getProxyUrl() {
-  return (
-    globalThis.SLACK_LOGS_PROXY_URL ||
-    getEnvValue("NEXT_PUBLIC_SLACK_LOGS_PROXY_URL") ||
-    getEnvValue("PUBLIC_SLACK_LOGS_PROXY_URL") ||
-    getEnvValue("SLACK_LOGS_PROXY_URL") ||
-    DEFAULT_PROXY_URL
-  );
+  return slackConfig?.proxy_url || DEFAULT_PROXY_URL;
+}
+
+function hasSlackConfig() {
+  if (slackConfig) {
+    return true;
+  }
+
+  console.error(MISSING_CONFIG_MESSAGE);
+  return false;
 }
 
 async function sendProxyRequest(body) {
+  if (!hasSlackConfig()) {
+    return null;
+  }
+
+  if (slackConfig.enable === false) {
+    return false;
+  }
+
   return fetch(getProxyUrl(), {
     method: "POST",
     headers: {
@@ -90,5 +108,6 @@ module.exports = {
   LogLevel,
   LogColor,
   handleSlackLogsRequest,
+  slackLogConfig,
   slack,
 };
