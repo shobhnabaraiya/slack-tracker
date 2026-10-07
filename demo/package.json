@@ -1,6 +1,5 @@
 {
-  "name": "slack-tracker",
-  "version": "4.0.4",
+  "name": "slack-tracker-demo",
   "private": true,
   "type": "commonjs",
   "scripts": {
@@ -8,6 +7,6 @@
     "dev": "node --watch index.js"
   },
   "dependencies": {
-    "slack-tracker": "^4.0.3"
+    "slack-tracker": "^3.0.0"
   }
 }

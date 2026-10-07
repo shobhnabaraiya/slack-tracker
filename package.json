@@ -1,17 +1,16 @@
 {
   "name": "slack-tracker",
-  "version": "4.0.5",
+  "version": "3.0.1",
   "description": "A simple Slack logger that sends logs to a Slack channel via a webhook URL",
-  "main": "dist/index.js",
-  "browser": "dist/browser.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "node scripts/build-dist.js",
-    "prepublishOnly": "npm run build",
-    "postpublish": "node scripts/release-git.js"
-  },
+  "main": "index.js",
+  "browser": "browser.js",
+  "types": "index.d.ts",
   "files": [
-    "dist"
+    "assets",
+    "browser.js",
+    "index.js",
+    "index.d.ts",
+    "README.md"
   ],
  "keywords": [
     "slack-log",
