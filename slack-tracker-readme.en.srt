@@ -1,0 +1,287 @@
+1
+00:00:01,600 --> 00:00:02,923
+Meet slack-tracker.
+
+2
+00:00:03,223 --> 00:00:07,090
+Simple Slack logging for Node.js
+and browser applications,
+
+3
+00:00:07,110 --> 00:00:09,271
+using Slack Incoming Webhooks.
+
+4
+00:00:10,821 --> 00:00:15,914
+It sends formatted logs, block messages,
+and raw Slack payloads, to a Slack channel.
+
+5
+00:00:16,164 --> 00:00:18,933
+Server-side code sends directly to Slack.
+
+6
+00:00:19,133 --> 00:00:22,425
+Browser code sends to your
+own backend proxy route,
+
+7
+00:00:22,445 --> 00:00:24,803
+so your webhook URL stays private.
+
+8
+00:00:26,453 --> 00:00:27,766
+Here's what's inside.
+
+9
+00:00:27,916 --> 00:00:33,818
+Node.js and browser support, TypeScript
+declarations, and Incoming Webhook support.
+
+10
+00:00:33,968 --> 00:00:37,820
+Direct server-side delivery,
+and browser-safe proxy delivery.
+
+11
+00:00:37,970 --> 00:00:41,844
+Simple log levels with Slack
+colors, and raw Block Kit payloads.
+
+12
+00:00:41,994 --> 00:00:46,036
+Plus a build-before-publish workflow,
+that ships only the dist folder.
+
+13
+00:00:47,686 --> 00:00:49,823
+Installation is a single command.
+
+14
+00:00:50,023 --> 00:00:53,913
+Use npm, yarn, or pnpm,
+whichever you prefer.
+
+15
+00:00:55,762 --> 00:00:57,492
+Want to see it in action first?
+
+16
+00:00:57,642 --> 00:00:59,815
+Open the live demo on StackBlitz.
+
+17
+00:01:00,015 --> 00:01:06,451
+Or download the code, run npm start in
+the demo folder, and open localhost:3030.
+
+18
+00:01:08,301 --> 00:01:09,840
+Next, configuration.
+
+19
+00:01:09,990 --> 00:01:14,195
+Call slackLogConfig() once, when
+your app starts. In your bootloader,
+
+20
+00:01:14,215 --> 00:01:16,815
+app constructor, or server startup code.
+
+21
+00:01:17,015 --> 00:01:22,464
+The webhook URL is required on the
+server. Enable turns logging on or off.
+
+22
+00:01:22,484 --> 00:01:25,812
+And proxy URL is an
+optional browser route.
+
+23
+00:01:26,012 --> 00:01:29,745
+If it isn't called before logging,
+the package prints a console error,
+
+24
+00:01:29,765 --> 00:01:30,880
+and skips the log.
+
+25
+00:01:32,530 --> 00:01:33,842
+Now, start logging.
+
+26
+00:01:33,992 --> 00:01:38,438
+Call slack.log, with a label, any
+data, and an optional log level.
+
+27
+00:01:38,688 --> 00:01:39,784
+Server started.
+
+28
+00:01:39,884 --> 00:01:41,014
+User created.
+
+29
+00:01:41,114 --> 00:01:42,541
+A validation warning.
+
+30
+00:01:42,641 --> 00:01:44,081
+And an unhandled error.
+
+31
+00:01:44,332 --> 00:01:47,102
+Each one lands in your
+channel, neatly formatted.
+
+32
+00:01:48,952 --> 00:01:50,579
+There are five log levels.
+
+33
+00:01:50,729 --> 00:01:51,463
+Default.
+
+34
+00:01:51,483 --> 00:01:52,297
+Success.
+
+35
+00:01:52,317 --> 00:01:53,039
+Info.
+
+36
+00:01:53,059 --> 00:01:53,706
+Warn.
+
+37
+00:01:53,726 --> 00:01:54,512
+And error.
+
+38
+00:01:54,762 --> 00:01:59,011
+Each level adds a label, an icon,
+and a color, to the Slack message.
+
+39
+00:02:00,662 --> 00:02:02,890
+Need several values in one message?
+
+40
+00:02:03,040 --> 00:02:06,778
+Use logBlockMessage, to send
+multiple titled values.
+
+41
+00:02:06,978 --> 00:02:11,773
+An order ID, an amount, and a customer
+object, all in one tidy block.
+
+42
+00:02:13,622 --> 00:02:16,301
+And when you need full
+control, use slack.raw.
+
+43
+00:02:16,501 --> 00:02:21,067
+Send any Slack payload you like, with
+Block Kit sections, context, and more.
+
+44
+00:02:23,117 --> 00:02:25,378
+You can even send interactive buttons.
+
+45
+00:02:25,578 --> 00:02:30,019
+Add an actions block with two buttons,
+and slack.raw sends it, as is.
+
+46
+00:02:30,269 --> 00:02:33,971
+To make clicks do something,
+enable Slack app interactivity,
+
+47
+00:02:33,991 --> 00:02:37,676
+and handle the block_actions
+payload, for each action_id.
+
+48
+00:02:39,725 --> 00:02:41,809
+Browser usage is supported too.
+
+49
+00:02:41,959 --> 00:02:46,399
+In the browser, logs are never
+sent directly to Slack. Instead,
+
+50
+00:02:46,419 --> 00:02:50,675
+they're posted to /api/slack-tracker,
+on your own backend.
+
+51
+00:02:50,875 --> 00:02:53,907
+So keep your webhook URL
+out of browser config.
+
+52
+00:02:54,107 --> 00:02:57,548
+And set a proxy URL, only
+when your route is different.
+
+53
+00:02:59,198 --> 00:03:03,107
+On the server, handleSlackLogsRequest
+does the heavy lifting.
+
+54
+00:03:03,307 --> 00:03:05,622
+Drop it into a Next.js route handler.
+
+55
+00:03:05,772 --> 00:03:07,009
+Or an Express route.
+
+56
+00:03:07,209 --> 00:03:12,155
+Your webhook URL comes from an environment
+variable, and never leaves the server.
+
+57
+00:03:14,005 --> 00:03:16,166
+Here's the full API, at a glance.
+
+58
+00:03:16,316 --> 00:03:19,060
+slack.log, for formatted messages.
+
+59
+00:03:19,110 --> 00:03:21,519
+logBlockMessage, for titled fields.
+
+60
+00:03:21,569 --> 00:03:23,286
+slack.raw, for custom payloads.
+
+61
+00:03:23,336 --> 00:03:27,040
+handleSlackLogsRequest,
+for browser proxy requests.
+
+62
+00:03:27,090 --> 00:03:31,556
+And slackLogConfig(), which stores your
+config once, before any of them run.
+
+63
+00:03:33,406 --> 00:03:34,675
+That's slack-tracker.
+
+64
+00:03:34,875 --> 00:03:37,171
+Configure it once, and log from anywhere.
+

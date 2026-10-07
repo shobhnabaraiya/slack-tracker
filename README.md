@@ -31,6 +31,8 @@ pnpm add slack-tracker
 
 ## Demo
 
+Video walkthrough: [Watch on YouTube](https://youtu.be/sa4l459zQhY) (3:41 narrated tour of this README)
+
 Live demo:
 
 ```txt
@@ -48,6 +50,8 @@ Open:
 ```txt
 http://localhost:3030
 ```
+
+Paste a webhook URL into the demo page and click `Save`, or start the demo with `SLACK_WEBHOOK_URL` set in your environment (see `demo/.env.example`).
 
 
 
@@ -76,8 +80,8 @@ Type:
 
 ```ts
 slackLogConfig({
-  webhookUrl: string,
-  enable: boolean,
+  webhookUrl?: string,
+  enable?: boolean,
   proxy_url?: string,
 });
 ```
@@ -115,6 +119,14 @@ await slack.log(
   { amount: 49, currency: "USD" },
   LogLevel.INFO,
 );
+```
+
+`data` can be any value, such as an object, an array, or a string:
+
+```ts
+await slack.log("Data", [{ title: "1yes!" }]);
+await slack.log("Data", { title: "2yes!" });
+await slack.log("Data", "Hello world!");
 ```
 
 ## Log Levels
@@ -176,6 +188,64 @@ await slack.raw({
   ],
 });
 ```
+
+### Button example
+
+![slack.raw button preview](./assets/slack-raw-button-preview.svg)
+
+```ts
+await slack.raw({
+  text: "One does not simply walk into Slack and click a button.",
+  blocks: [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "*One does not simply walk into Slack and click a button.*",
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "At least that's what my friend *Slackomir* said. :crossed_swords:",
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      type: "actions",
+      elements: [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Sure One Does",
+            emoji: true,
+          },
+          style: "danger",
+          value: "sure_one_does",
+          action_id: "sure_one_does",
+        },
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "One Does Not",
+            emoji: true,
+          },
+          style: "primary",
+          value: "one_does_not",
+          action_id: "one_does_not",
+        },
+      ],
+    },
+  ],
+});
+```
+
+If you want button clicks to do something, enable Slack app interactivity and handle the `block_actions` payload for each `action_id`.
 
 ## Browser Usage
 
@@ -281,7 +351,7 @@ slack.logBlockMessage("Label", [{ title: "Status", value: "OK" }]);
 
 ### `slack.raw(payload)`
 
-Sends a custom Slack webhook payload.
+Sends a custom Slack webhook payload as-is.
 
 ```ts
 slack.raw({ text: "Hello Slack" });
@@ -307,3 +377,12 @@ slackLogConfig({
 ```
 
 Call this before `slack.log`, `slack.logBlockMessage`, `slack.raw`, or `handleSlackLogsRequest`.
+
+### Exports
+
+- `slack`
+- `slackLogConfig`
+- `handleSlackLogsRequest`
+- `LogLevel`
+- `LogColor`
+- `DEFAULT_PROXY_URL` (`"/api/slack-tracker"`)
