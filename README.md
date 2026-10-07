@@ -4,6 +4,12 @@ Simple Slack logging for Node.js and browser applications using Slack Incoming W
 
 `slack-tracker` sends formatted logs, block messages, and raw Slack payloads to a Slack channel. Server-side code sends directly to Slack. Browser code sends to your own backend proxy route so your Slack webhook URL stays private.
 
+## Video walkthrough (YouTube)
+
+**slack-tracker: Send Slack Logs from Node.js and the Browser (npm walkthrough)**
+
+<a href="https://youtu.be/sa4l459zQhY"><img src="https://img.youtube.com/vi/sa4l459zQhY/maxresdefault.jpg" alt="slack-tracker video walkthrough" width="480"></a>
+
 ## Features
 
 - Node.js and browser support
@@ -30,8 +36,6 @@ pnpm add slack-tracker
 ```
 
 ## Demo
-
-Video walkthrough: [Watch on YouTube](https://youtu.be/sa4l459zQhY) (3:41 narrated tour of this README)
 
 Live demo:
 
